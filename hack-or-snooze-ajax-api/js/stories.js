@@ -25,7 +25,7 @@ function generateStoryMarkup(story) {
   const hostName = story.getHostName();
   return $(`
       <li id="${story.storyId}">
-      ${deleteStoryHTML()}
+
       ${favHeartHTML(story,currentUser)}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
@@ -81,11 +81,15 @@ $submitForm.on(`submit`,submitNewStory);
 async function deleteStoryClick(e){
   console.debug(`deleteStory`);
 
-  const $storyId = $(e.target).closest(`li`).attr(`id`);
-  await storyList.deleteStory(currentUser,$storyId);
+  const $target = $(e.target);
+  const $storyId = $target.closest(`li`).attr(`id`);
 
-  //refresh my page
-  showMyPage();
+  //delete story when click on trash can
+  if($target.hasClass(`fas fa-trash`)){
+    await storyList.deleteStory(currentUser,$storyId);
+    $target.parent().remove();
+  }
+
 }
 
 $myStory.on(`click`,deleteStoryClick);
@@ -96,20 +100,22 @@ $myStory.on(`click`,deleteStoryClick);
 async function handleFavStories(e){
   console.debug(`handleFavStory`);
 
-  //get the select story
+  // get the select story
   const $target = $(e.target);
   const $storyId = $target.closest(`li`).attr(`id`);
   const story = storyList.stories.find(s => s.storyId === $storyId);
 
-  //like fav story
-  if($target.hasClass(`far`)){
+  // like fav story
+  if($target.hasClass(`fa-heart far`)){
     await currentUser.addFavorite(story);
     $target.closest(`i`).toggleClass(`far fas`);
+    console.log('like fav story')
   }
   //delete fav story
-  else{
-    await currentUser.deleteFavorite(story);
+  else if($target.hasClass(`fa-heart fas`)){
+    await currentUser.deleteFavorite(story); 
     $target.closest(`i`).toggleClass(`far fas`);
+    console.log('delete fav story')
   }
 }
 
@@ -122,7 +128,6 @@ function showFavoritePage(){
   $favoriteStory.empty();
   for(let story of currentUser.favorites){
     const $story = generateStoryMarkup(story);
-    $(`.fa-trash`).show();
     $favoriteStory.append($story);
   }
 
@@ -136,11 +141,12 @@ function showMyPage(){
   $myStory.empty();
   for(let story of currentUser.ownStories){
     const $story = generateStoryMarkup(story);
+    $story.prepend(deleteStoryHTML());
     $myStory.append($story);
   }
   $myStory.show();
   //show all trash symbol
-  $(`#my-story li i`).show();
+  // $(`#my-story li i`).show();
 }
 
 
@@ -153,11 +159,11 @@ function favHeartHTML(story,user){
   const isFav = user.checkFav(story);
   const type = isFav ? "fas" : `far`;
   return `
-  <span><i class="${type} fa-heart"></i></span>
+  <span><i class="fa-heart ${type}"></i></span>
   `
 }
 
 //append delete symbol
 function deleteStoryHTML(){
-  return `<i class="fas fa-trash hidden"></i>`
+  return `<i class="fas fa-trash"></i>`
 }
