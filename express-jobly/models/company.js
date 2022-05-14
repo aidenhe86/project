@@ -1,7 +1,7 @@
 "use strict";
 
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for companies. */
@@ -44,20 +44,55 @@ class Company {
     return company;
   }
 
-  /** Find all companies.
-   *
+  /** Find all companies with search filter.
+   *  accept obj contains name,minEmployees,maxEmployees
+   * 
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
-    const companiesRes = await db.query(
+  static async findAll(searchFilter = {}) {
+    let query = 
           `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
+           FROM companies`;
+    let filterQuery = [];
+    let queryValues = [];
+
+    const {name,minEmployees,maxEmployees} = searchFilter;
+    
+    // check if invalid entry
+    if(minEmployees > maxEmployees){
+      throw new BadRequestError("Min employees must smaller than max employees.")
+    }
+
+    // if query have min
+    if(minEmployees !== undefined){
+      queryValues.push(minEmployees);
+      filterQuery.push(`num_employees >= $${queryValues.length}`)
+    }
+
+    // if query have max
+    if(maxEmployees !== undefined){
+      queryValues.push(maxEmployees);
+      filterQuery.push(`num_employees <= $${queryValues.length}`)
+    }
+
+    // if query have name
+    if(name !== undefined){
+      queryValues.push(name);
+      filterQuery.push(`name ILIKE $${queryValues.length}`)
+    }
+
+    // add filter query to original query
+    if(filterQuery.length !== 0){
+      query += " WHERE " + filterQuery.join(" AND ")
+    }
+    query += " ORDER BY name";
+
+    const companiesRes = await db.query(query,queryValues);
     return companiesRes.rows;
   }
 
