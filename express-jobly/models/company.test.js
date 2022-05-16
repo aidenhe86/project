@@ -180,11 +180,25 @@ describe("get", function () {
   test("works", async function () {
     let company = await Company.get("c1");
     expect(company).toEqual({
-      handle: "c1",
       name: "C1",
       description: "Desc1",
       numEmployees: 1,
       logoUrl: "http://c1.img",
+      handle : "c1",
+      jobs : [
+          {
+            id : 1,
+            title: "j1",
+            salary: 12345,
+            equity: "0",
+          },
+          {
+              id : 2,
+              title: "j2",
+              salary: 123456,
+              equity: "0.5",
+          },
+      ],
     });
   });
 

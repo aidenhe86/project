@@ -12,6 +12,7 @@ const {
   commonAfterAll,
   u1Token,
   adminToken,
+  testJobIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -84,14 +85,14 @@ describe("GET /companies", function () {
               handle: "c1",
               name: "C1",
               description: "Desc1",
-              numEmployees: 1,
+              numEmployees: 2,
               logoUrl: "http://c1.img",
             },
             {
               handle: "c2",
               name: "C2",
               description: "Desc2",
-              numEmployees: 2,
+              numEmployees: 1,
               logoUrl: "http://c2.img",
             },
             {
@@ -113,7 +114,7 @@ describe("GET /companies", function () {
           handle: "c1",
           name: "C1",
           description: "Desc1",
-          numEmployees: 1,
+          numEmployees: 2,
           logoUrl: "http://c1.img",
         }
       ]
@@ -125,11 +126,11 @@ describe("GET /companies", function () {
     expect(res.body).toEqual({
       companies:[
         {
-          handle: "c2",
-          name: "C2",
-          description: "Desc2",
+          handle: "c1",
+          name: "C1",
           numEmployees: 2,
-          logoUrl: "http://c2.img",
+          description: "Desc1",
+          logoUrl: "http://c1.img",
         },
         {
           handle: "c3",
@@ -150,14 +151,14 @@ describe("GET /companies", function () {
           handle: "c1",
           name: "C1",
           description: "Desc1",
-          numEmployees: 1,
+          numEmployees: 2,
           logoUrl: "http://c1.img",
         },
         {
           handle: "c2",
           name: "C2",
           description: "Desc2",
-          numEmployees: 2,
+          numEmployees: 1,
           logoUrl: "http://c2.img",
         }
       ]
@@ -172,7 +173,7 @@ describe("GET /companies", function () {
           handle: "c2",
           name: "C2",
           description: "Desc2",
-          numEmployees: 2,
+          numEmployees: 1,
           logoUrl: "http://c2.img",
         }
       ]
@@ -207,8 +208,22 @@ describe("GET /companies/:handle", function () {
         handle: "c1",
         name: "C1",
         description: "Desc1",
-        numEmployees: 1,
+        numEmployees: 2,
         logoUrl: "http://c1.img",
+        jobs : [
+          {
+            id : expect.any(Number),
+            title: "j1",
+            salary: 1000,
+            equity: "0",
+          },
+          {
+            id : expect.any(Number),
+            title: "j2",
+            salary: 10000,
+            equity: "0.5",
+          },
+        ]
       },
     });
   });
@@ -220,8 +235,16 @@ describe("GET /companies/:handle", function () {
         handle: "c2",
         name: "C2",
         description: "Desc2",
-        numEmployees: 2,
+        numEmployees: 1,
         logoUrl: "http://c2.img",
+        jobs : [
+          {
+            id : expect.any(Number),
+            title: "j1",
+            salary: 2000,
+            equity: "0",
+          },
+        ]
       },
     });
   });
@@ -247,7 +270,7 @@ describe("PATCH /companies/:handle", function () {
         handle: "c1",
         name: "C1-new",
         description: "Desc1",
-        numEmployees: 1,
+        numEmployees: 2,
         logoUrl: "http://c1.img",
       },
     });
