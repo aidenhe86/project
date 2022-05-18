@@ -140,6 +140,7 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
+      jobs: [1, 2],
     });
   });
 
@@ -214,8 +215,7 @@ describe("update", function () {
 describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
-    const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
+    const res = await db.query("SELECT * FROM users WHERE username='u1'");
     expect(res.rows.length).toEqual(0);
   });
 
@@ -225,6 +225,46 @@ describe("remove", function () {
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+// Apply Jobs
+
+describe("Apply job", function () {
+  test("works", async function () {
+    await User.applyJob("u1", 3);
+    const res = await db.query(
+      `SELECT * FROM applications WHERE username = 'u1' AND job_id = 3`
+    );
+    expect(res.rows.length).toEqual(1);
+  });
+
+  test("fails:not exist job id", async function () {
+    try {
+      await User.applyJob("u1", 0);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("fails:not exist username", async function () {
+    try {
+      await User.applyJob("nfsdfsdfs", 1);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("fail: duplicate application", async function () {
+    try {
+      await User.applyJob("u1", 3);
+      await User.applyJob("u1", 3);
+      fail();
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
 });
