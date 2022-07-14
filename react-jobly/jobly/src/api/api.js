@@ -41,16 +41,46 @@ class JoblyApi {
     return res.company;
   }
 
-  // Get companies with filter
+  // Get companies with filter name
   static async getCompanies(name) {
     let res = await this.request(`companies`, { name });
     return res.companies;
   }
 
-  // login and return a login token
+  // Get jobs with filter title
+  static async getJobs(title) {
+    let res = await this.request(`jobs`, { title });
+    return res.jobs;
+  }
+
+  // login and return a user token
   static async login(data) {
     let res = await this.request(`auth/token`, data, "post");
     return res.token;
+  }
+
+  // signup and return a user token
+  static async signup(data) {
+    let res = await this.request(`auth/register`, data, "post");
+    return res.token;
+  }
+
+  // get current user info
+  static async getCurrentUser(username) {
+    let res = await this.request(`users/${username}`);
+    return res.user;
+  }
+
+  // edit current user info
+  static async updateCurrentUser(username, data) {
+    let res = await this.request(`users/${username}`, data, "patch");
+    return res.user;
+  }
+
+  // apply for a job
+  static async applyJob(username, jobId) {
+    let res = await this.request(`users/${username}/jobs/${jobId}`, {}, "post");
+    return res.applied;
   }
 }
 

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card, CardBody, CardSubtitle, CardTitle } from "reactstrap";
 import { Link } from "react-router-dom";
+import UserContext from "../auth/UserContext";
 
 function Home() {
-  // const { currentUser } = useContext(UserContext);
-  let currentUser = false;
+  const { currentUser } = useContext(UserContext);
   return (
     <section className="col-md-8">
       <Card>
@@ -14,7 +14,9 @@ function Home() {
           </CardTitle>
           <CardSubtitle>All the jobs in one, convenient place.</CardSubtitle>
           {currentUser ? (
-            <h4>Welcome Back, {currentUser}</h4>
+            <h4>
+              Welcome Back, {currentUser.firstName || currentUser.username}
+            </h4>
           ) : (
             <span>
               <Link color="primary" to="/login">

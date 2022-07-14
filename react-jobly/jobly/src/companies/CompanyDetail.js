@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import JoblyApi from "../api/api";
-import JobList from "../jobs/JobList";
+import JobCardList from "../jobs/JobCardList";
+import Loading from "../common/Loading";
 
 const CompanyDetail = () => {
   // get params
@@ -18,12 +19,12 @@ const CompanyDetail = () => {
     let c = await JoblyApi.getCompany(handle);
     setCompany(c);
   };
-  console.log(company.jobs);
+  if (!company.jobs) return <Loading />;
   return (
     <div>
       <h2>{company.name}</h2>
       <p>{company.description}</p>
-      <JobList jobs={company.jobs} />
+      <JobCardList jobs={company.jobs} />
     </div>
   );
 };

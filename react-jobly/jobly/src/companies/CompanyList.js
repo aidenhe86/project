@@ -12,7 +12,7 @@ const CompanyList = () => {
     search();
   }, []);
 
-  // accept a name prop to search company
+  // accept a name argument to search company
   const search = async (name) => {
     let companies = await JoblyApi.getCompanies(name);
     setCompanies(companies);
@@ -32,7 +32,7 @@ const CompanyList = () => {
           />
         ))
       ) : (
-        <p> nocompanyfound</p>
+        <p>No Company Found.</p>
       )}
     </div>
   );

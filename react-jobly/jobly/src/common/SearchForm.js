@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./SearchForm.css";
 
 const SearchForm = ({ search }) => {
   const INITIAL_STATE = {
@@ -6,7 +7,7 @@ const SearchForm = ({ search }) => {
   };
   const [formData, setFormData] = useState(INITIAL_STATE);
 
-  //   change the name when user input the search name
+  //   change the name value when user input the search name
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((formData) => ({
@@ -15,13 +16,13 @@ const SearchForm = ({ search }) => {
     }));
   };
 
-  //   show the search result
+  //   show the search result by input term or undefined
   const handleSubmit = (e) => {
     e.preventDefault();
-    search(formData.name);
+    search(formData.name || undefined);
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="SearchForm" onSubmit={handleSubmit}>
       <input
         onChange={handleChange}
         name="name"

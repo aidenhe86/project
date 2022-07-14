@@ -11,6 +11,7 @@ const SignupForm = ({ signup }) => {
     lastName: "",
     email: "",
   });
+  const [formErrors, setFormErrors] = useState([]);
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,10 +20,16 @@ const SignupForm = ({ signup }) => {
       [name]: value,
     }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    signup(formData);
-    navigate("/companies");
+    console.log(formData);
+    let result = await signup(formData);
+    // check if successful login, if not show error message
+    if (result.success === true) {
+      navigate("/companies");
+    } else {
+      setFormErrors(result.e);
+    }
   };
   return (
     <form onSubmit={handleSubmit}>
@@ -45,20 +52,20 @@ const SignupForm = ({ signup }) => {
         autoComplete="on"
         required
       />
-      <label htmlFor="firstname">First Name:</label>
+      <label htmlFor="firstName">First Name:</label>
       <input
         onChange={handleChange}
-        name="firstname"
+        name="firstName"
         value={formData.firstname}
         placeholder="first name"
         required
       />
-      <label htmlFor="lastname">Last Name:</label>
+      <label htmlFor="lastName">Last Name:</label>
       <input
         onChange={handleChange}
-        name="lastname"
+        name="lastName"
         value={formData.lastname}
-        placeholder="lastname"
+        placeholder="last name"
         required
       />
       <label htmlFor="email">Email:</label>
@@ -71,6 +78,7 @@ const SignupForm = ({ signup }) => {
         required
       />
       <button>Submit</button>
+      {formErrors.length ? formErrors.map((e) => <div>{e}</div>) : null}
     </form>
   );
 };

@@ -8,6 +8,7 @@ const LoginForm = ({ login }) => {
     username: "",
     password: "",
   });
+  const [formErrors, setFormErrors] = useState([]);
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,10 +17,15 @@ const LoginForm = ({ login }) => {
       [name]: value,
     }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
-    navigate("/companies");
+    let result = await login(formData);
+    // check if successful login, if not show error message
+    if (result.success === true) {
+      navigate("/companies");
+    } else {
+      setFormErrors(result.e);
+    }
   };
   return (
     <form onSubmit={handleSubmit}>
@@ -43,6 +49,7 @@ const LoginForm = ({ login }) => {
         required
       />
       <button>Submit</button>
+      {formErrors.length ? formErrors.map((e) => <div>{e}</div>) : null}
     </form>
   );
 };
